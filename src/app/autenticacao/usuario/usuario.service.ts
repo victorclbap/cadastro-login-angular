@@ -32,6 +32,7 @@ export class UsuarioService {
 
   salvaToken(token: string) {
     this.tokenService.salvaToken(token);
+    // notifica todos os componentes que tem um token novo
     this.decodificaJWT();
   }
 

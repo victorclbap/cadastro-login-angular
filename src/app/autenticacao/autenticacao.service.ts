@@ -2,7 +2,9 @@ import { UsuarioService } from './usuario/usuario.service';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { ThisReceiver } from '@angular/compiler';
+import { environment } from 'src/environments/environment';
+
+const API = environment.apiURL;
 
 //Indica que pode ser injetado em outra dependencia
 @Injectable({
@@ -14,11 +16,12 @@ export class AutenticacaoService {
     private usuarioService: UsuarioService
   ) {}
 
-  // quando a requisicao completar, vai retornar o objeto que definir no observable
+  // normalmente retorna apenas o body
+  // precisamos tipar httpresponse, e adicionar observe:response para receber o header
   autenticar(usuario: string, senha: string): Observable<HttpResponse<any>> {
     return this.httpClient
       .post(
-        'http://localhost:3000/user/login',
+        `${API}/user/login`,
         {
           userName: usuario,
           password: senha,
@@ -29,7 +32,7 @@ export class AutenticacaoService {
         }
       )
       .pipe(
-        // tap faz operação
+        // alem de fazer requisição faz operação com tap
         tap((res) => {
           const authToken = res.headers.get('x-access-token') ?? '';
           this.usuarioService.salvaToken(authToken);
